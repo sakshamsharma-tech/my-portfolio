@@ -122,12 +122,55 @@ zyada time + zyada bug. Pehle core value deliver karo.
 | NFR-06 | `prefers-reduced-motion` respected | CSS media query |
 | NFR-07 | No console errors | Browser console |
 | NFR-08 | 100% automated test pass | `npm test` |
+| NFR-09 | YouTube tabs keyboard se navigate ho (Left/Right arrow, Home/End) aur `role="tablist"/"tab"/"tabpanel"` sahi ho | RTL `userEvent.keyboard` test |
+| NFR-10 | Focus indicator background se **3:1** minimum | `scripts/contrast-audit.mjs` + computed outline check |
+| NFR-11 | Saare text elements apne *effective* background pe **WCAG AA** — gradient aur semi-transparent bhi mila kar | `node scripts/contrast-audit.mjs` (dono themes, exit 0 = pass) |
+| NFR-12 | Dummy/sample data kahin bhi misleading na lage — visibly label lage | Manual + review |
 
 ## 1.7 Constraints
 
 1. **No backend** — contact form simulate karega (v1 constraint, product decision).
 2. **Static hosting** — GitHub Pages (free, HTTPS, repo se linked).
 3. **Hash-based anchors** (`#projects`) — taaki Pages pe deep-link 404 na de.
+4. **YouTube stats dummy hongi** — koi real YouTube API call nahi. Data `src/data/youtube.js` me static hai, taaki repo public hone par bhi koi real claim galat na na ho. Baad me API lagana ho toh sirf wahi file badalni hai.
+5. **YouTube section me embedded video player nahi** — v1 me sirf service areas + stats. Player se page weight aur consent banner dono badhte.
+
+---
+
+## 1.7.1 YouTube section — shape (owner ke saath finalised)
+
+> Ye section 2026-10-02 ko requirements discussion ke baad decide hua. Owner ne confirm kiya.
+
+**Page me position:** `Skills` ke turant baad, `Projects` se pehle.
+Nav link: `YouTube` (About / Skills / **YouTube** / Projects / Experience / Contact)
+
+**Section me 2 blocks:**
+
+1. **Stats strip** — "Dono mix" decide kiya:
+   - Primary row (channel metrics): Subscribers, Videos, Views, Niches
+   - Secondary row (service proof): Channels Managed, Videos Delivered, Growth
+
+2. **6 clickable tabs** — har tab ek service area. Click → sirf uska panel dikhe.
+   Tabs user ne **"sahi 6, content strategy merge karke"** chune:
+   | # | Tab | Isme kya hai |
+   |---|---|---|
+   | 1 | Content Strategy, Thumbnails & SEO | topic planning, niche + competitor research, titles, tags, descriptions, thumbnail design |
+   | 2 | Scripting & Editing | script writing, shoot, edit, subtitles, motion graphics |
+   | 3 | Publishing & Scheduling | upload, schedule, playlists, end screens, community posts |
+   | 4 | Analytics & Growth | watch time, retention curve, CTR analyse karke improve karna |
+   | 5 | Monetization & Brand Deals | AdSense, sponsorship, brand collaboration outreach |
+   | 6 | Community Engagement | comments reply, collaborations, audience retention |
+
+   *(Content Strategy alag card nahi hai — uska kaam Tab 1 me merge hai, taaki card count consistent rahe.)*
+
+3. **CTA** — "Apna channel grow karna hai?" → button jo Contact section par scroll kare.
+
+**Kya jaan-boojh kar nahi rakha:**
+- ❌ Recent videos block — owner ne confirm kiya "sirf service cards". Isliye thumbnails ka sawal moot ho gaya (pehle "local SVG placeholder thumbnails" ka jawab diya tha, par videos block baad me hata diya gaya).
+- ❌ Niche chips block — niche sirf section ke subtitle text me mention hoga.
+- ❌ YouTube API / real analytics.
+
+**Niche:** "Tech + Lifestyle mix" — dummy channel isi par banaya jayega.
 
 ## 1.8 Risks
 
@@ -178,6 +221,29 @@ zyada time + zyada bug. Pehle core value deliver karo.
 - AC-04.2 Choice `localStorage.theme` me save ho
 - AC-04.3 Reload ke baad saved theme restore ho
 
+### US-05 — YouTube channel management capability dikhe
+**As a** business owner, **I want** dekh sakein ki ye developer doosre logon ke YouTube channels
+manage karte hain, **so that** main unhe apna channel grow karne ke liye hire kar sakoon.
+
+- AC-05.1 Skills section ke baad YouTube section render ho, aur nav ka "YouTube" link us par scroll kare
+- AC-05.2 Stats strip me **4 primary metrics** (Subscribers, Videos, Views, Niches) dikhein
+- AC-05.3 Stats strip ke neeche **service proof counters** (Channels Managed, Videos Delivered, Growth) dikhein
+- AC-05.4 **6 tabs** render hon; pehla by default active ho
+- AC-05.5 Tab click karne par **sirf uska panel** dikhe, baaki panels hidden hon
+- AC-05.6 Active tab visually highlighted ho **aur** `aria-selected="true"` ho
+- AC-05.7 Right/Left arrow keys se tab switch ho (NFR-09)
+- AC-05.8 CTA button click karne par Contact section par scroll ho
+- AC-05.9 Header **aur** Footer dono me YouTube social link ho
+- AC-05.10 Stats ke paas **"Sample data"** label dikhe (NFR-12)
+
+### US-06 — YouTube dummy data mislead na kare
+**As a** visitor, **I want** pata chal jaye ki YouTube numbers sample hain, **so that** main inhe
+apni asli track record na samajhoon.
+
+- AC-06.1 Stats strip me visible "Sample data" ya equivalent label ho
+- AC-06.2 Label ka contrast WCAG AA pass kare (NFR-11)
+- AC-06.3 Dummy numbers `src/data/youtube.js` me hon, component me hardcode nahi (FR-17)
+
 ---
 
 ## 1.10 Definition of Done (DoD)
@@ -188,7 +254,51 @@ Feature "done" tab maana jayega jab:
 - [ ] Automated tests likhe hon aur pass hon
 - [ ] NFR checklist (mobile + console + a11y) verify ho
 - [ ] Docs update ho
+- [ ] Dummy data placeholder ho to README me "1 minute me change karo" step ho (NFR-12)
+
+---
+
+## 1.11 Decision Log
+
+> SDLC me har important decision ka **record** rakhna chahiye — warna 6 mahine baad koi
+> (ya tum khud) sochega "ye decision kyun liya tha?" Isliye ADR-lite format me rakhte hain.
+
+| ID | Date | Decision | Kyun | Kisne |
+|---|---|---|---|---|
+| DL-01 | 2026-10-02 | Personal details placeholder rahenge (`Aarav Sharma`, `example.com` emails, non-existent GitHub repo links) | Repo dummy content ke saath hi push hoga. Asli data baad me `src/data/` se badalna hai — 1 file, 2 minute ka kaam | Owner |
+| DL-02 | 2026-10-02 | **GitHub push + Pages deploy sabse aakhir me** | Pehle saare requirements confirm, tests pass, phir deploy. Adhoora deploy karke wapas na lautna pade | Owner |
+| DL-03 | 2026-10-02 | YouTube service cards **tabs** me hongi, accordion me nahi | 6 areas ko space-efficient tarike se dikhane ke liye; tab pattern keyboard-friendly hai | Owner |
+| DL-04 | 2026-10-02 | Recent videos block YouTube section me **nahi** | Scope chhota rakhte hue; dummy video thumbnails fake lagte | Owner |
+| DL-05 | 2026-10-02 | YouTube stats dummy hongi, par **visibly "Sample data"** label lagega | Dummy number ko na pakadna — koi job ya client mislead na ho | Owner |
+| DL-06 | 2026-10-02 | Content Strategy card ko Tab 1 me merge kiya (6 cards, 7 nahi) | Card count consistent rakhne ke liye; merge bhi semantically sahi hai | Owner |
+| DL-07 | 2026-10-02 | Skill cards nahi, **clickable tabs** chune gaye | Har service area ka detail panel me full space milta hai | Owner |
+| DL-08 | 2026-10-02 | Header **aur** Footer dono me YouTube social icon | Social proof ek hi jagah nahi — dono zaroori | Owner |
+| DL-09 | 2026-10-02 | Stats strip me **channel metrics + service proof dono** | "Mer channel bada hai" (credibility) aur "main manage karta hoon" (service) — dono angles | Owner |
+| DL-10 | 2026-10-02 | `--brand` token ko 2 me toda: `--brand` + `--brand-solid` | Ek colour text-accent aur white-text-background dono ke liye use ho raha tha; dono ka WCAG requirement alag hai | Engineering |
+
+---
+
+## 1.12 Open Questions (ye resolve nahi hue, build se pehle pooch lena)
+
+| # | Sawaal | Kyun zaroori |
+|---|---|---|
+| Q1 | Kya social links `src/data/profile.js` me YouTube URL kya hoga? (dummy `youtube.com/@...` theek hai?) | Header/Footer link tootega agar URL galat ho |
+| Q2 | Contact form ke social icons me YouTube bhi chahiye, ya sirf Header/Footer me? | Consistency check |
+| Q3 | Kya tabs ka content `src/data/youtube.js` me poora rahe (saare bullets), ya component me hardcode? | FR-17 kehti hai `src/data/` me — confirm karna hai owner ko |
+| Q4 | Stats strip numbers 4 + 3 = 7 total — mobile pe wrap kaise kare? (2 columns? slider?) | NFR-01 mobile checklist |
 
 ---
 
 **Next phase →** [02 — DESIGN](./02-design.md)
+
+---
+
+> **📌 Analysis phase me 2 baar update hua (traceability ke liye):**
+>
+> | Kab | Kya change hua |
+> |---|---|
+> | Initial | v1 scope — Hero → Contact, FR-01..17, US-01..04 |
+> | 2026-10-02 | YouTube Channel Management section add: FR-18..26, NFR-09..12, US-05, US-06, Persona 3, Constraints 4-5, Decision Log (DL-01..10), Open Questions |
+>
+> Agle phase ka kaam: `docs/02-design.md` me YouTube section ka architecture likhna hai
+> (component split, tab state management, `src/data/youtube.js` ka shape).
