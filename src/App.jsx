@@ -3,6 +3,7 @@ import { useReveal } from './hooks/useReveal.js';
 import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
 import About from './components/About.jsx';
+import Skills from './components/Skills.jsx';
 // anchor:skills
 
 /**
@@ -26,7 +27,8 @@ export default function App() {
           {/* Sections yahan add hoti hain — anchor:hero */}
           <Hero />
           <About />
-          {/* anchor:skills */}
+          <Skills />
+          {/* anchor:projects */}
         </main>
       </div>
     </ThemeProvider>
