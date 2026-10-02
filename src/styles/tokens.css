@@ -10,9 +10,27 @@
 
 :root {
   /* ---- Brand / gradient ---- */
-  --brand: #6366f1;
+  /* ⚠️ DO alag tokens ki zaroorat hai — ek colour DONO kaam nahi kar sakta:
+   *
+   *   --brand        → jab brand colour TEXT/ACCENT ki tarah use ho
+   *                    (light surface ke upar). Yahan halka chahiye.
+   *   --brand-solid  → jab brand colour BACKGROUND ki tarah use ho aur
+   *                    uske upar WHITE text ho. Yahan GEHRA chahiye.
+   *
+   * Agar ek hi token rakhte to ek do me se ek zaroor fail hota:
+   *   #818cf8 → text ke liye perfect, par white uske upar sirf 2.98:1 ❌
+   *   #4f46e5 → white ke liye perfect (6.29:1), par pehle wala brand
+   *             #6366f1 light surface pe text ke liye 3.89:1 ❌
+   */
+  --brand: #4f46e5;
   --brand-2: #a855f7;
-  --brand-soft: rgba(99, 102, 241, 0.12);
+  --brand-soft: rgba(79, 70, 229, 0.12);
+
+  /* Gradient pair — SIRF un jagah jahan upar WHITE text hai.
+     Worst stop #7c3aed pe white text = 5.70:1 ✅
+     (pehle #a855f7 pe tha → 3.96:1 ❌) */
+  --brand-solid: #4f46e5;
+  --brand-solid-2: #7c3aed;
 
   /* ---- Semantic colours : LIGHT theme ---- */
   --bg: #f6f7fc;
@@ -21,9 +39,15 @@
   --surface-2: #f1f3fa;
   --text: #0e1122;
   --text-2: #3a3f55;
-  --muted: #697089;
+  /* WCAG AA ke liye zaroori: --muted ko har light surface pe 4.5:1+ chahiye.
+     Sabse kharab surface --bg-alt (#eceff8) hai — wahi check karke value chuni.
+       #697089 -> 4.27:1  ❌ FAIL
+       #5a6178 -> 5.35:1  ✅ (worst case) */
+  --muted: #5a6178;
   --border: #dde1ee;
-  --ring: rgba(99, 102, 241, 0.45);
+  /* Focus ring ke liye WCAG 2.4.11 → background se 3:1 minimum.
+     Light surface pe indigo 0.45 alpha pehle bahut faint tha. */
+  --ring: rgba(79, 70, 229, 0.85);
 
   /* ---- Status colours ---- */
   --success: #15803d;
@@ -89,9 +113,13 @@
 
 /* ---- DARK theme : sirf values override hoti hain ---- */
 [data-theme='dark'] {
+  /* Dark theme me --brand halka rakhna hai (text ke liye dark bg pe sahi hai),
+     par BACKGROUND ke liye --brand-solid use hoga (see :root ka comment). */
   --brand: #818cf8;
   --brand-2: #c084fc;
   --brand-soft: rgba(129, 140, 248, 0.16);
+  --brand-solid: #4f46e5;
+  --brand-solid-2: #7c3aed;
 
   --bg: #090b14;
   --bg-alt: #0d1020;
@@ -99,9 +127,12 @@
   --surface-2: #1a1f39;
   --text: #f1f3fb;
   --text-2: #c7cce0;
-  --muted: #8f97b4;
+  /* Dark theme me sabse kharab surface --surface-2 (#1a1f39) hai.
+     #8f97b4 -> 5.58:1, par thoda margin rakhne ke liye #98a0bd -> 6.23:1 */
+  --muted: #98a0bd;
   --border: #262c48;
-  --ring: rgba(129, 140, 248, 0.55);
+  /* Pehle 0.55 alpha pe focus ring sirf 2.73:1 tha (WCAG 2.4.11 ko chahiye 3:1) */
+  --ring: rgba(129, 140, 248, 0.95);
 
   --success: #4ade80;
   --danger: #f87171;
