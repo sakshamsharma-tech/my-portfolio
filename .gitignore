@@ -27,3 +27,9 @@ Thumbs.db
 # Vite cache
 .vite/
 *.local
+
+# Playwright CLI artifacts (browser snapshots, screenshots) — test output hai, code nahi
+.playwright-cli/
+shots/
+test-results/
+playwright-report/
