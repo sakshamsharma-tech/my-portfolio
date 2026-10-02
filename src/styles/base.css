@@ -233,6 +233,72 @@ textarea {
 }
 
 /* ---- Utilities ---- */
+.noscript {
+  max-width: 42rem;
+  margin: 18vh auto;
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  font-family: var(--font-body);
+  color: var(--text);
+  text-align: center;
+}
+
+.noscript h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  margin-bottom: var(--space-3);
+}
+
+.noscript p {
+  color: var(--muted);
+}
+
+/* ---- ErrorBoundary fallback ---- */
+.crash {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--gutter);
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+.crash__card {
+  max-width: 34rem;
+  padding: var(--space-7);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.crash__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-3);
+}
+
+.crash__text {
+  color: var(--muted);
+  margin-bottom: var(--space-5);
+}
+
+.crash__detail {
+  margin-top: var(--space-5);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--danger);
+  font-size: var(--fs-xs);
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
 .gradient-text {
   background: linear-gradient(120deg, var(--brand), var(--brand-2));
   -webkit-background-clip: text;
