@@ -4,6 +4,7 @@ import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
 import About from './components/About.jsx';
 // anchor:skills
+import Projects from './components/Projects.jsx';
 
 /**
  * App = "composition root".
@@ -27,6 +28,7 @@ export default function App() {
           <Hero />
           <About />
           {/* anchor:skills */}
+          <Projects />
         </main>
       </div>
     </ThemeProvider>

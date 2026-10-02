@@ -78,6 +78,9 @@
 
   /* ---- Scroll animations me fill hote hain ---- */
   --reveal-delay: 0ms;
+
+  /* ---- Projects (card hover glow) ---- */
+  --card-glow: 0 18px 40px -18px color-mix(in srgb, var(--brand) 55%, transparent);
 }
 
 /* ---- DARK theme : sirf values override hoti hain ---- */
