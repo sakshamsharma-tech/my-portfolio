@@ -28,10 +28,16 @@ export const profile = {
     { value: '18', label: 'Clients served' },
   ],
 
+  /**
+   * Social links — Header me sirf YouTube (compact), Footer me sab.
+   * `youtube` DL-11 ke mutabiq dummy hai: https://youtube.com/@sakshamsharmatech
+   * Asli channel ka URL yahan badalna, kahin aur nahi.
+   */
   socials: [
     { label: 'GitHub', url: 'https://github.com/your-username', icon: 'github' },
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/your-username', icon: 'linkedin' },
     { label: 'X', url: 'https://x.com/your-username', icon: 'x' },
+    { label: 'YouTube', url: 'https://youtube.com/@sakshamsharmatech', icon: 'youtube', header: true },
     { label: 'Email', url: 'mailto:aarav.sharma@example.com', icon: 'mail' },
   ],
 };

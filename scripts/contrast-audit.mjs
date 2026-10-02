@@ -98,6 +98,37 @@ function auditPage() {
     return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
   };
 
+  /**
+   * Candidates ki list chhoti karta hai — par ARBITRARILY nahi.
+   *
+   * Pehle `slice(0, 12)` tha, jo asli worst cases ko kaat sakta tha
+   * (jo bhi pehle aaya, wahi raha). Ab hum **6 sabse dark + 6 sabse light**
+   * rakhte hain. Kyun? Caller ko minimum ratio chahiye — aur minimum ratio
+   * hamesha do extremes me se ek par aata hai (kisi bhi beech ke colour
+   * par nahi). Toh extremes rakhne se koi worst case miss nahi hota.
+   */
+  const cap = (list, keep = 6) => {
+    if (list.length <= keep * 2) return dedupe(list);
+
+    const sorted = [...list].sort((a, b) => lum(a) - lum(b));
+    return dedupe([
+      ...sorted.slice(0, keep),                      // sabse dark
+      ...sorted.slice(-keep),                         // sabse light
+    ]);
+  };
+
+  const dedupe = (list) => {
+    const seen = new Set();
+    const out = [];
+    for (const c of list) {
+      const k = c.map((v) => Math.round(v)).join(',');
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(c);
+    }
+    return out;
+  };
+
   /** kya ye element apna background TEXT ko paint kar raha hai? */
   const isGradientText = (el) => {
     const cs = getComputedStyle(el);
@@ -106,13 +137,28 @@ function auditPage() {
   };
 
   /**
-   * Element ke ancestors tak chalkar saare possible BACKGROUND candidates banata hai.
-   * Gradient har stop ke liye alag candidate deta hai.
+   * Element ke ancestors tak chalkar background ki "paint stack" banata hai,
+   * phir usse OUTERMOST → INNERMOST order me composite karta hai.
+   *
+   * ⚠️ Composite order hi asli fix hai (2026-10-02). Pehle ye bottom-up tha:
+   *   `el` se ancestor ki taraf chalta tha aur har semi-transparent layer ko
+   *   us waqt ke candidates pe paint karta tha. Problem: tab tak sirf
+   *   **white canvas** candidates me hota tha, kyunki andar kisi node ka
+   *   background nahi mila tha.
+   *
+   *   Iska matlab: `rgba(129,140,248,0.16)` (dark theme ka `--brand-soft`)
+   *   ko white pe paint kiya gaya → rgb(235,237,254) → ek BRIGHT background
+   *   report hua, jabki asli me wo DARK page ke upar paint hota hai.
+   *   `.yt-stat--service` ka label 2.23:1 FAIL dikha, jo galat report tha.
+   *
+   *   Real browsers me semi-transparent layer apne neeche wale (ancestor)
+   *   background ke upar paint hota hai — isliye ab hum pehle poori layer
+   *   list banate hain (innermost → outermost), phir ULTA chalate hain.
+   *
    * Return: { candidates: [[r,g,b,a], ...], layersFound: bool }
    */
   const backgroundCandidates = (el) => {
-    // white canvas se shuru
-    let candidates = [[255, 255, 255, 1]];
+    const stack = []; // per-node paint layers, innermost → outermost
     let layersFound = false;
 
     let node = el;
@@ -120,34 +166,44 @@ function auditPage() {
       const cs = getComputedStyle(node);
       const isTextClip = isGradientText(node);
 
-      // gradient layer (text-clip wale element ka gradient BACKGROUND nahi hai)
+      // gradient-text wale element ka gradient BACKGROUND nahi hai
       const stops = isTextClip ? [] : gradientStops(cs.backgroundImage);
       const bgc = parse(cs.backgroundColor);
 
+      // CSS paint order: background-COLOUR sabse neeche, background-IMAGE
+      // uske upar. (Ye order galat rakhne se gradient ke neeche ka
+      //  background-color ignore ho jata tha.)
       const layerColors = [];
-      if (stops.length) layerColors.push(...stops);
       if (bgc && bgc[3] > 0) layerColors.push(bgc);
+      layerColors.push(...stops);
 
       if (layerColors.length) {
         layersFound = true;
-        const next = [];
-        for (const base of candidates) {
-          // ⚠️ Yahan koi `break` NAHI daalna. Layer ke SAARE colour stops
-          // candidates hain — gradient me "sabse kharab stop" hi count hota hai.
-          // (Pehle yahan break tha, jisse doosra stop #c084fc miss ho raha tha
-          //  aur white-on-gradient ka ratio galat 2.98 dikha raha tha.)
-          for (const layer of layerColors) {
-            next.push(over(layer, base));
-          }
-        }
-        candidates = next.slice(0, 12);
+        stack.push(layerColors);
       }
 
-      // Koi bhi colour opaque mil gaya → uske upar kuch paint nahi hota,
-      // isliye ancestors walk karna BAND. (Ye break upar wali loop me hai,
-      // layer ke colours ke BEECH me nahi.)
-      if (layerColors.some((c) => c[3] === 1)) break;
+      // ⚠️ Sirf OPAQUE `background-COLOUR` par walk rokna hai.
+      //
+      // Gradient ke andar ka opaque stop bhi poore element ko cover NAHI
+      // karta — wo sirf us position ka colour hai (interpolation beech me
+      // kuch aur deti hai). Pehle yahan `layerColors.some(opaq)` tha, jisse
+      // `.yt-stat--service` par walk ruk gaya aur uske 16%-alpha stop ko
+      // white canvas pe paint kiya gaya → rgb(235,237,254) ka jhootha
+      // bright background → 2.23:1 ka jhootha FAIL.
+      if (bgc && bgc[3] === 1) break;
       node = node.parentElement;
+    }
+
+    // Sabse neeche: white canvas. Phir outermost → innermost paint karo.
+    let candidates = [[255, 255, 255, 1]];
+    for (let i = stack.length - 1; i >= 0; i -= 1) {
+      const next = [];
+      for (const base of candidates) {
+        // ⚠️ Yahan koi `break` NAHI daalna. Layer ke SAARE colour stops
+        // candidates hain — gradient me "sabse kharab stop" hi count hota hai.
+        for (const col of stack[i]) next.push(over(col, base));
+      }
+      candidates = cap(next);
     }
 
     return { candidates, layersFound };

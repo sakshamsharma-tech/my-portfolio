@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Contrast audit — self-test fixture</title>
+    <style>
+      body { margin: 0; background: #ffffff; color: #111; font-family: system-ui; }
+      section { padding: 24px; }
+
+      /* CASE 1: plain low contrast — MUST FAIL (2.1:1, chahiye 4.5) */
+      #case1 { color: #cccccc; background: #ffffff; font-size: 14px; }
+
+      /* CASE 2: large text just under 3:1 — MUST FAIL (2.6:1, chahiye 3) */
+      #case2 { color: #999999; background: #ffffff; font-size: 30px; font-weight: 700; }
+
+      /* CASE 3: semi-transparent text over light bg — MUST FAIL.
+         #777 at 60% over white ≈ #c2c2c2 → ~1.9:1 */
+      #case3 { color: rgba(119, 119, 119, 0.6); background: #ffffff; font-size: 14px; }
+
+      /* CASE 4: dark page, semi-transparent GRADIENT card.
+         Ye asli bug wala case hai: rgba(0,0,0,.15) gradient stop ko
+         white canvas pe paint karna galat tha. Sahi = dark bg pe light text. */
+      .dark-wrap { background: #0b0d16; padding: 24px; }
+      .dark-wrap .card {
+        background: linear-gradient(150deg, rgba(150, 160, 255, 0.16), #12162a 70%);
+        color: #c7cce0;
+        font-size: 14px;
+      }
+
+      /* CASE 5: good contrast — MUST PASS (≈13:1) */
+      #case5 { color: #1a1a1a; background: #ffffff; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <section><p id="case1">case one plain low contrast</p></section>
+    <section><p id="case2">case two large text low contrast</p></section>
+    <section><p id="case3">case three semi transparent text</p></section>
+    <div class="dark-wrap">
+      <p class="card" id="case4">case four dark page semi transparent gradient</p>
+    </div>
+    <section><p id="case5">case five good contrast</p></section>
+  </body>
+</html>

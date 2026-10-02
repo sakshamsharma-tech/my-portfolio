@@ -1,5 +1,6 @@
 import Nav from './Nav.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
+import SocialLinks from './SocialLinks.jsx';
 import { profile } from '../data/profile.js';
 import { useEffect, useState } from 'react';
 
@@ -29,6 +30,10 @@ export default function Header() {
 
         <div className="header__actions">
           <Nav />
+          {/* Header me sirf YouTube icon (AC-05.9) — poori social row
+              header ko crowded kar deti, khaas kar mobile par.
+              Baaki sab links Footer me hain. */}
+          <SocialLinks only="header" className="socials--header" />
           <ThemeToggle />
         </div>
       </div>

@@ -11,6 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "audit:contrast": "node scripts/contrast-audit.mjs http://localhost:4173",
+    "test:contrast": "node scripts/audit-selftest.mjs",
+    "generate:resume": "node scripts/generate-placeholder-resume.mjs",
     "deploy:pages": "npm run build && gh-pages -d dist -t"
   },
   "dependencies": {
