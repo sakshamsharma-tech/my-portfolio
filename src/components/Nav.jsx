@@ -10,7 +10,10 @@ const SECTIONS = [
   { id: 'contact', label: 'Contact' },
 ];
 
-const SECTION_IDS = SECTIONS.map((s) => s.id);
+// Scroll-spy ko thoda zyada pata chahiye: 'home' bhi track karo (nav link nahi hai,
+// isliye page ke top pe koi link highlight nahi hoga — sahi behaviour).
+// Yehi thi wajah ki page ke top par "About" highlight ho raha tha.
+const SPY_IDS = ['home', ...SECTIONS.map((s) => s.id)];
 
 function MenuIcon({ open }) {
   return open ? (
@@ -44,7 +47,7 @@ function MenuIcon({ open }) {
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const activeId = useScrollSpy(SECTION_IDS);
+  const activeId = useScrollSpy(SPY_IDS);
 
   return (
     <>
