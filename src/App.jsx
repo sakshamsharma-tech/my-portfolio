@@ -1,7 +1,9 @@
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { useReveal } from './hooks/useReveal.js';
 import Header from './components/Header.jsx';
-// anchor:about
+import Hero from './components/Hero.jsx';
+import About from './components/About.jsx';
+// anchor:skills
 
 /**
  * App = "composition root".
@@ -22,13 +24,9 @@ export default function App() {
 
         <main id="main">
           {/* Sections yahan add hoti hain — anchor:hero */}
-          <section className="section">
-            <div className="container">
-              <p className="section__sub">
-                Portfolio v1 build ho raha hai… sections ek-ek karke add ho rahe hain.
-              </p>
-            </div>
-          </section>
+          <Hero />
+          <About />
+          {/* anchor:skills */}
         </main>
       </div>
     </ThemeProvider>
