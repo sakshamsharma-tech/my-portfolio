@@ -414,6 +414,15 @@
     justify-content: center;
   }
 
+  /* AC-01.4: mobile par CTA buttons side me nahi, upar-neeche stack hone chahiye.
+     Bina iske flex-wrap ki wajah se ek hi line me fit ho jaate the. */
+  .hero__cta {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 320px;
+    margin-inline: auto;
+  }
+
   /* Mobile par floating chips clutter banate hain — chhupa dete hain */
   .chip {
     display: none;

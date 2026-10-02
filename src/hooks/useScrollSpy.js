@@ -20,9 +20,18 @@ export function useScrollSpy(ids, offset = 140) {
         // element mila aur uska top line se upar chala gaya → yeh active hai
         if (el && el.offsetTop <= line) current = id;
       }
-      // page ke bilkul neeche ho toh last section active
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
-        current = ids[ids.length - 1] ?? current;
+
+      // Page ke bilkul neeche ho toh aakhri "maojood" section active karo.
+      // Pehle bug tha: `ids[ids.length - 1]` directly lete the, jo page pe
+      // exist hi nahi karta (jab tak wo section ban nahi hota) → galat highlight.
+      const docHeight = document.documentElement.scrollHeight;
+      if (window.innerHeight + window.scrollY >= docHeight - 4) {
+        for (let i = ids.length - 1; i >= 0; i -= 1) {
+          if (document.getElementById(ids[i])) {
+            current = ids[i];
+            break;
+          }
+        }
       }
 
       setActiveId((prev) => (prev === current ? prev : current));
