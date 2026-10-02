@@ -4,8 +4,10 @@ import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
 import About from './components/About.jsx';
 import Skills from './components/Skills.jsx';
-// anchor:skills
+import YouTube from './components/YouTube.jsx';
 import Projects from './components/Projects.jsx';
+// anchor:footer
+import Footer from './components/Footer.jsx';
 
 /**
  * App = "composition root".
@@ -29,8 +31,11 @@ export default function App() {
           <Hero />
           <About />
           <Skills />
+          <YouTube />
           <Projects />
         </main>
+
+        <Footer />
       </div>
     </ThemeProvider>
   );

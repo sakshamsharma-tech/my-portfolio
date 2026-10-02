@@ -771,7 +771,386 @@ a.facts__val:hover {
   border-top: 1px solid var(--border);
 }
 
+/* ===== anchor:youtube ===== */
+
+/* ---------------- YouTube: stats strip (DUMB) ---------------- */
+
+/* Q4/DL-14: 7 numbers HORIZONTAL SCROLL strip me, 2-column grid nahi.
+   Isi liye `overflow-x: auto` + `scroll-snap`. */
+.yt-stats {
+  position: relative;
+  margin-block: var(--space-6) var(--space-7);
+}
+
+.yt-stats__badge {
+  display: inline-block;
+  padding: 3px 10px;
+  margin-bottom: var(--space-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.yt-stats__scroll {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  /* ---- horizontal scroll affordance (DL-14) ---- */
+  overflow-x: auto;
+  scroll-snap-type: x proximity; /* proximity zyada humane hai — mandatory
+                                   scroll karna force kar deta hai, jisse
+                                   last card pe "trap" ho sakte ho */
+  scroll-padding-inline: var(--space-1);
+  padding: var(--space-2) var(--space-1) var(--space-3);
+  /* thin scrollbar: cross-browser, modern browsers me support */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  /* Right edge fade → user ko visually pata chale aur cards hain (AC-05.3.3) */
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 3rem), transparent 100%);
+}
+
+/* Firefox + legacy WebKit par styled scrollbar */
+.yt-stats__scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.yt-stats__scroll::-webkit-scrollbar-track {
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+}
+.yt-stats__scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-pill);
+}
+
+/* Keyboard focus ho to mask hatao — full visibility better (NFR-13) */
+.yt-stats__scroll:focus-visible {
+  mask-image: none;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.yt-stat {
+  flex: 0 0 auto; /* cards shrink na hon — number na tute */
+  scroll-snap-align: start;
+  min-width: 132px;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+/* Service-proof cards thoda visually distinct — hierarchy dikhe */
+.yt-stat--service {
+  background: linear-gradient(
+    150deg,
+    var(--brand-soft),
+    var(--surface) 70%
+  );
+}
+
+.yt-stat:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--border));
+  box-shadow: var(--shadow-md);
+}
+
+.yt-stat__value {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  line-height: 1.1;
+  /* Numbers brand colour ke — `--brand` (on-surface token) */
+  background: linear-gradient(120deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.yt-stat__label {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+/* Beech me vertical divider — primary vs service group alag dikhe */
+.yt-stats__divider {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 1px;
+  height: 60%;
+  margin-inline: var(--space-1);
+  background: var(--border);
+}
+
+/* ---------------- YouTube: tabs (TabGroup = SMART) ---------------- */
+
+.yt-tabs {
+  margin-top: var(--space-6);
+}
+
+/* Tab list horizontally scrollable bhi ho sakta hai mobile par
+   (6 tabs ek line me nahi aayenge 375px pe) */
+.yt-tabs__list {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.yt-tabs__list::-webkit-scrollbar {
+  display: none; /* touch par koi scrollbar zaroori nahi */
+}
+
+.yt-tab {
+  flex: 0 0 auto;
+  position: relative;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease);
+}
+
+/* Active tab ka underline — colour `--brand` (on-surface accent) */
+.yt-tab::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: -1px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.yt-tab:hover {
+  color: var(--text-2);
+}
+
+.yt-tab--active {
+  color: var(--text);
+}
+
+.yt-tab--active::after {
+  opacity: 1;
+}
+
+.yt-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------------- YouTube: panel (DUMB) ---------------- */
+
+.yt-panel {
+  margin-top: var(--space-5);
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--card-glow);
+}
+
+.yt-panel:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.yt-panel__head {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.yt-panel__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  /* Upar WHITE text → `--brand-solid` zaroori (DL-10) */
+  background: linear-gradient(135deg, var(--brand-solid), var(--brand-solid-2));
+  color: #fff;
+}
+
+.yt-panel__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-lg);
+  color: var(--text);
+}
+
+.yt-panel__summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.yt-panel__points {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.yt-panel__point {
+  position: relative;
+  padding-left: var(--space-6);
+  color: var(--text-2);
+  font-size: var(--fs-base);
+}
+
+/* Check-mark — pure CSS, koi icon asset nahi */
+.yt-panel__point::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 14px;
+  height: 8px;
+  border-left: 2px solid var(--brand);
+  border-bottom: 2px solid var(--brand);
+  transform: rotate(-45deg);
+}
+
+/* ---------------- YouTube: CTA (AC-05.8) ---------------- */
+
+.yt-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--brand-soft), transparent 65%);
+}
+
+.yt-cta__title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-lg);
+  color: var(--text);
+}
+
+.yt-cta__text {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+/* Narrow screens par CTA button full width (NFR-01) */
+@media (max-width: 560px) {
+  .yt-panel {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .yt-cta {
+    padding: var(--space-4);
+  }
+
+  .yt-cta .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* ===== anchor:projects ===== */
 /* ===== anchor:experience ===== */
 /* ===== anchor:contact ===== */
+/* ===== anchor:footer ===== */
+
+/* Generic social row — Header (`.socials--header`) aur Footer (`.socials--footer`)
+   dono isko reuse karte hain. */
+.socials {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Header me sirf 1 icon hai — list ka extra padding flex gap ko double na kare */
+.socials--header {
+  gap: 0;
+}
+
+/* Header par space chahiye nav se */
+.socials--header .social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+}
+
+.footer {
+  margin-top: var(--space-8);
+  padding-block: var(--space-7);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.footer__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.footer__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.footer__role {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.footer__meta {
+  flex-basis: 100%;
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
 /* ===== anchor:polish ===== */
