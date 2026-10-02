@@ -1397,7 +1397,9 @@ a.contact__value:hover {
 
 .field__req {
   margin-left: 3px;
-  color: var(--brand-solid);
+  /* `--brand` (on-surface accent), `--brand-solid` NAHI — wo white-text
+     ke background ke liye hai; dark bg pe 3.12:1 deta hai (DL-10) */
+  color: var(--brand);
 }
 
 .field__hint {
