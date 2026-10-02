@@ -1,0 +1,126 @@
+# ============================================================
+# GitHub Actions — test → build → deploy (GitHub Pages)
+# ============================================================
+#
+# Ye workflow har push par CHALEGA, aur yehi deployment bhi karta hai.
+# Iska matlab: agar koi test fail hua to deploy hoga hi nahi.
+# "Deploy separately karo" me lagti energy nahi lagti.
+#
+# Manual trigger bhi hai (workflow_dispatch) — zaroorat padne par button
+# dabao, bina kuch push kiye deploy ho jayega.
+# ============================================================
+
+name: Deploy to GitHub Pages
+
+# ---- Kab chalega ----
+on:
+  push:
+    branches: [main] # sirf main se. Feature branch push = sirf CI, deploy nahi.
+  pull_request:
+    branches: [main] # PR me bhi test chalenge (merge se pehle pakad lo bugs)
+  workflow_dispatch: # manual "Run workflow" button
+
+# ---- Concurrency ----
+# Ek time par ek deploy. Naya push aaye to purana running deploy cancel
+# ho jayega — warna purane build ke baad naya build, dono publish karenge.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read # repo ka code padhna
+  pages: write # Pages me publish karna
+  id-token: write # GitHub ko proof dena ki ye genuine workflow hai
+
+jobs:
+  # ==========================================================
+  # STEP 1 — Test
+  # ==========================================================
+  # Kyun alag job? Taaki deploy step ko ye chahiye hi na.
+  # Agar test fail hua, Pages step ko chalti hi nahi.
+  test:
+    name: Tests + Contrast audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # node_modules cache → tez
+
+      - name: Install dependencies
+        run: npm ci # package-lock.json se EXACT versions
+
+      - name: Unit + integration tests
+        run: npm test
+
+      - name: Contrast audit ka self-test
+        run: npm run test:contrast
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  # ==========================================================
+  # STEP 2 — Build
+  # ==========================================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test # ← test pass hua tabhi
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (with Pages base path)
+        env:
+          # ⚠️ Ye MOST IMPORTANT step hai. Pages site `https://<user>.github.io/<repo>/`
+          # par hoti hai — root par nahi. Isi liye `base` path chahiye warna
+          # saare assets 404 honge (CSS/JS load nahi hoga, blank page).
+          #
+          # Repo ka naam badla? Ye bhi badalna padega.
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+        run: npm run build
+
+      - name: Verify build output exists
+        run: |
+          test -f dist/index.html || { echo "dist/index.html missing — build fail hua"; exit 1; }
+          echo "Bundle sizes:"
+          du -sh dist
+          ls -la dist/assets
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # ==========================================================
+  # STEP 3 — Deploy
+  # ==========================================================
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build # ← build pass hua tabhi
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
