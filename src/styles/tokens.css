@@ -78,6 +78,10 @@
 
   /* ---- Scroll animations me fill hote hain ---- */
   --reveal-delay: 0ms;
+
+  /* ---- Skills (level bars) ---- */
+  --bar-track: var(--surface-2);
+  --bar-fill: linear-gradient(90deg, var(--brand), var(--brand-2));
 }
 
 /* ---- DARK theme : sirf values override hoti hain ---- */
