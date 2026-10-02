@@ -48,6 +48,22 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!--
+      Ye site ek React SPA hai, isliye JavaScript band karte hi #root khaali
+      rehta hai. Is message ko render karne ke liye JS zaroori hai.
+    -->
+    <noscript>
+      <div class="noscript">
+        <h1>JavaScript zaroori hai</h1>
+        <p>
+          Ye portfolio React se bana hai, isliye content browser me dikhane ke liye
+          JavaScript on hona padta hai. Kripya apne browser me JavaScript enable kar ke
+          page dobara reload karein.
+        </p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
