@@ -1,0 +1,207 @@
+/* ============================================================
+   COMPONENT STYLES
+   Har section ka apna block hai. Neeche anchors hain —
+   nayi file merge aane par apne anchor se pehle insert hoti hai.
+   ============================================================ */
+
+/* ---------------- Header / Nav ---------------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.header--scrolled {
+  border-bottom-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.brand:hover {
+  text-decoration: none;
+  color: var(--brand);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.nav__link {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-2);
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.nav__link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.nav__link--active {
+  color: var(--brand);
+}
+
+.nav__link--active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+}
+
+.nav__toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.icon-btn:hover {
+  color: var(--brand);
+  border-color: var(--brand);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 860px) {
+  .nav__toggle {
+    display: inline-flex;
+  }
+
+  /* Mobile par menu default me band (display:none), khulne par flex */
+  .nav {
+    display: none;
+    position: absolute;
+    top: var(--header-h);
+    right: var(--gutter);
+    left: var(--gutter);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .nav--open {
+    display: flex;
+    animation: nav-drop 0.22s var(--ease);
+  }
+
+  @keyframes nav-drop {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  .nav__link {
+    padding: 12px 14px;
+  }
+
+  .nav__link--active::after {
+    left: 14px;
+    right: auto;
+    width: 20px;
+    bottom: 8px;
+  }
+}
+
+/* ---- Scrollbar (webkit) ---- */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 3px solid var(--bg-alt);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+/* ===== anchor:hero ===== */
+/* ===== anchor:skills ===== */
+/* ===== anchor:projects ===== */
+/* ===== anchor:experience ===== */
+/* ===== anchor:contact ===== */
+/* ===== anchor:polish ===== */
