@@ -126,6 +126,8 @@ zyada time + zyada bug. Pehle core value deliver karo.
 | NFR-10 | Focus indicator background se **3:1** minimum | `scripts/contrast-audit.mjs` + computed outline check |
 | NFR-11 | Saare text elements apne *effective* background pe **WCAG AA** — gradient aur semi-transparent bhi mila kar | `node scripts/contrast-audit.mjs` (dono themes, exit 0 = pass) |
 | NFR-12 | Dummy/sample data kahin bhi misleading na lage — visibly label lage | Manual + review |
+| NFR-13 | Horizontal scroll strip keyboard-accessible ho (arrow keys + focusable cards) aur scroll affordance visible ho | `userEvent.keyboard` + visual check |
+| NFR-14 | External links `rel="noreferrer noopener"` carry kare | Code review + DOM assertion |
 
 ## 1.7 Constraints
 
@@ -227,14 +229,19 @@ manage karte hain, **so that** main unhe apna channel grow karne ke liye hire ka
 
 - AC-05.1 Skills section ke baad YouTube section render ho, aur nav ka "YouTube" link us par scroll kare
 - AC-05.2 Stats strip me **4 primary metrics** (Subscribers, Videos, Views, Niches) dikhein
-- AC-05.3 Stats strip ke neeche **service proof counters** (Channels Managed, Videos Delivered, Growth) dikhein
+- AC-05.3 Stats strip me **3 service proof counters** (Channels Managed, Videos Delivered, Growth) bhi hon — total 7
+- AC-05.3.1 Stats strip **horizontal scroll** ho (mobile + desktop), `scroll-snap` ke saath
+- AC-05.3.2 Strip keyboard se scroll ho sake (arrow keys), har card focusable ho
+- AC-05.3.3 Partial card cut-off dikhta rahe taaki user ko pata chale aur numbers hain
 - AC-05.4 **6 tabs** render hon; pehla by default active ho
 - AC-05.5 Tab click karne par **sirf uska panel** dikhe, baaki panels hidden hon
 - AC-05.6 Active tab visually highlighted ho **aur** `aria-selected="true"` ho
 - AC-05.7 Right/Left arrow keys se tab switch ho (NFR-09)
 - AC-05.8 CTA button click karne par Contact section par scroll ho
-- AC-05.9 Header **aur** Footer dono me YouTube social link ho
+- AC-05.9 Header **aur** Footer dono me YouTube social link ho — URL `https://youtube.com/@sakshamsharmatech`
 - AC-05.10 Stats ke paas **"Sample data"** label dikhe (NFR-12)
+- AC-05.11 YouTube link `target="_blank"` ho aur `rel="noreferrer noopener"` carry kare (security)
+- AC-05.12 Social icon ka accessible name "YouTube" ho (screen reader ke liye)
 
 ### US-06 — YouTube dummy data mislead na kare
 **As a** visitor, **I want** pata chal jaye ki YouTube numbers sample hain, **so that** main inhe
@@ -243,6 +250,7 @@ apni asli track record na samajhoon.
 - AC-06.1 Stats strip me visible "Sample data" ya equivalent label ho
 - AC-06.2 Label ka contrast WCAG AA pass kare (NFR-11)
 - AC-06.3 Dummy numbers `src/data/youtube.js` me hon, component me hardcode nahi (FR-17)
+- AC-06.4 Tabs ke saare bullets bhi `src/data/youtube.js` me hon (DL-13)
 
 ---
 
@@ -275,17 +283,32 @@ Feature "done" tab maana jayega jab:
 | DL-08 | 2026-10-02 | Header **aur** Footer dono me YouTube social icon | Social proof ek hi jagah nahi — dono zaroori | Owner |
 | DL-09 | 2026-10-02 | Stats strip me **channel metrics + service proof dono** | "Mer channel bada hai" (credibility) aur "main manage karta hoon" (service) — dono angles | Owner |
 | DL-10 | 2026-10-02 | `--brand` token ko 2 me toda: `--brand` + `--brand-solid` | Ek colour text-accent aur white-text-background dono ke liye use ho raha tha; dono ka WCAG requirement alag hai | Engineering |
+| DL-11 | 2026-10-02 | YouTube URL = `https://youtube.com/@sakshamsharmatech` (dummy) | DL-01 ke mutabiq placeholder. `profile.js` me 1 line — badalna 10 second | Owner |
+| DL-12 | 2026-10-02 | Contact section me YouTube icon **nahi** | Header + Footer kaafi hai; har jagah icon dene se page repetitive lagta hai | Owner |
+| DL-13 | 2026-10-02 | Poora YouTube content `src/data/youtube.js` me (stats + 6 tabs ke bullets) | FR-17 strict follow. Content badalna component chhede bina ho jaaye | Owner |
+| DL-14 | 2026-10-02 | Stats strip **horizontal scroll** hogi (2-column grid nahi) | 7 numbers ko ek line me rakhna compact lagta hai; scroll affordance se user ko pata chalega | Owner |
 
 ---
 
-## 1.12 Open Questions (ye resolve nahi hue, build se pehle pooch lena)
+## 1.12 Resolved Questions
 
-| # | Sawaal | Kyun zaroori |
-|---|---|---|
-| Q1 | Kya social links `src/data/profile.js` me YouTube URL kya hoga? (dummy `youtube.com/@...` theek hai?) | Header/Footer link tootega agar URL galat ho |
-| Q2 | Contact form ke social icons me YouTube bhi chahiye, ya sirf Header/Footer me? | Consistency check |
-| Q3 | Kya tabs ka content `src/data/youtube.js` me poora rahe (saare bullets), ya component me hardcode? | FR-17 kehti hai `src/data/` me — confirm karna hai owner ko |
-| Q4 | Stats strip numbers 4 + 3 = 7 total — mobile pe wrap kaise kare? (2 columns? slider?) | NFR-01 mobile checklist |
+> Ye 4 sawaal build se pehle pooche gaye the. Owner ne 2026-10-02 ko jawab diya.
+
+| # | Sawaal | Jawab | Asar |
+|---|---|---|---|
+| Q1 | YouTube URL kya hoga? | **`https://youtube.com/@sakshamsharmatech`** (dummy placeholder, DL-01 ke mutabiq) | `src/data/profile.js` me `socials` me ek entry. Header + Footer dono use karenge |
+| Q2 | Contact section me bhi YouTube icon? | **Nahi** — sirf Header + Footer | Contact ka social row nahi banega, scope chhota rehta hai |
+| Q3 | Tabs ka content data file me ya component me? | **Poora `src/data/youtube.js` me** | FR-17 strictly follow. Saare 6 tabs ke bullets bhi data file me |
+| Q4 | Mobile pe 7 stats kaise dikhein? | **Horizontal scroll strip** | Desktop pe bhi ek row. NFR-01 me scroll-snapping + keyboard scroll add karna hoga |
+
+**Q4 ka design implication (02-design me jayega):**
+- Strip par `overflow-x: auto` + `scroll-snap-type: x mandatory`
+- Har stat card par `scroll-snap-align: start`
+- Keyboard: arrow keys se native scroll hota hai, par focusable rakhna zaroori (NFR-04)
+- `scrollbar-width: thin` taaki scroll affordance visible rahe
+- ⚠️ **Trade-off jaan-boojh kar:** horizontal strip me kuch numbers screen ke bahar reh sakte hain —
+  isliye visible affordance (partial card cut-off) zaroori hai, warna user ko pata hi nahi chalega
+  ki aur numbers hain.
 
 ---
 
