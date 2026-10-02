@@ -6,6 +6,10 @@ import About from './components/About.jsx';
 import Skills from './components/Skills.jsx';
 import YouTube from './components/YouTube.jsx';
 import Projects from './components/Projects.jsx';
+import Experience from './components/Experience.jsx';
+import Education from './components/Education.jsx';
+import Contact from './components/Contact.jsx';
+import BackToTop from './components/BackToTop.jsx';
 // anchor:footer
 import Footer from './components/Footer.jsx';
 
@@ -33,8 +37,12 @@ export default function App() {
           <Skills />
           <YouTube />
           <Projects />
+          <Experience />
+          <Education />
+          <Contact />
         </main>
 
+        <BackToTop />
         <Footer />
       </div>
     </ThemeProvider>
