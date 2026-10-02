@@ -5,6 +5,7 @@ import Hero from './components/Hero.jsx';
 import About from './components/About.jsx';
 import Skills from './components/Skills.jsx';
 // anchor:skills
+import Projects from './components/Projects.jsx';
 
 /**
  * App = "composition root".
@@ -28,7 +29,7 @@ export default function App() {
           <Hero />
           <About />
           <Skills />
-          {/* anchor:projects */}
+          <Projects />
         </main>
       </div>
     </ThemeProvider>
