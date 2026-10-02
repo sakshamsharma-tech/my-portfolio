@@ -23,6 +23,7 @@ ko 30 second me bata de ki "yeh kaun hai aur isne kya banaya hai".
 |---|---|
 | Recruiter / HR | 30 second me skill + proof samajhna, phone/email par seedha contact |
 | Client (freelance) | Past work + stack + availability |
+| **Client (YouTube channel owner)** | **Proof ki channel grow hoga — retention/CTR/brand deals ka evidence** |
 | Khud ka developer (owner) | Bina coding ke naam/links/projects badal sake (content alag file me) |
 | Engineering team | Clean code, tests, reproducible deploy |
 
@@ -38,6 +39,11 @@ ko 30 second me bata de ki "yeh kaun hai aur isne kya banaya hai".
 > Specific project dhundhta hai — e.g. "dashboard" ya "payment" — dekhna chahta hai
 > ki usne real problem solve ki ya nahi.
 
+**Persona 3 — "Mr. Verma, Course Creator"** *(naya — YouTube section ke liye)*
+> Apna channel grow karna chahta hai, par video banane se zyada **channel management**
+> (SEO, retention, monetization) uski problem hai. Isko dekhna hai ki "isne kisi aur
+> ka channel chalaya hai ya nahi" — aur uske liye is section ka maaksad **contact** hai.
+
 ---
 
 ## 1.4 Scope
@@ -46,13 +52,19 @@ ko 30 second me bata de ki "yeh kaun hai aur isne kya banaya hai".
 1. Hero section — naam, role, 2 CTA buttons
 2. About — chhoti intro + quick stats
 3. Skills — category-wise tags
-4. Projects — **filterable** grid (yeh main interactive feature hai)
-5. Experience — vertical timeline
-6. Education + Certifications
-7. Contact form — **client-side validation** ke saath
-8. Dark / Light theme toggle (localStorage me persist)
-9. Mobile responsive + sticky nav
-10. Contact form + theme toggle ka automated test coverage
+4. **YouTube Channel Management section** — stats strip + 6 clickable tabs (yaani **youTubeChannelManagement** capability dikhana hai)
+5. Projects — **filterable** grid (yeh main interactive feature hai)
+6. Experience — vertical timeline
+7. Education + Certifications
+8. Contact form — **client-side validation** ke saath
+9. Dark / Light theme toggle (localStorage me persist)
+10. Mobile responsive + sticky nav
+11. Contact form + theme toggle + YouTube tabs ka automated test coverage
+
+> **YouTube section ka scope kyun?** Owner ka real kaam sirf frontend nahi — wo doosre logon ke
+> YouTube channels bhi manage karta hai (scripting, editing, SEO, publishing, analytics,
+> monetization, community). Ye ek **doosri revenue stream / service offering** hai, isliye use
+> apna section aur apni user story (US-05) maangi gayi — skills list me chipka dena kaafi nahi tha.
 
 ### Out of Scope (v1 me nahi — future me)
 - Backend / real email sending (form abhi simulate karta hai)
@@ -60,6 +72,7 @@ ko 30 second me bata de ki "yeh kaun hai aur isne kya banaya hai".
 - Analytics (Google Analytics)
 - Admin panel se content edit karna
 - SEO ke liye dynamic sitemap (static meta tags kaafi hain)
+- **Real YouTube videos ka embedded player / thumbnails** (pehle phase me — dummy data se kaam chalayenge)
 
 **Yeh decision kyun?** Scope control SDLC ka "Planning" hissa hai. Zyada scope =
 zyada time + zyada bug. Pehle core value deliver karo.
@@ -87,6 +100,15 @@ zyada time + zyada bug. Pehle core value deliver karo.
 | FR-15 | Theme choice `localStorage` me save hogi aur reload ke baad bhi rahegi |
 | FR-16 | Footer me social links aur copyright hon |
 | FR-17 | Saare content ek `src/data/` folder me hoga — components me hardcode text nahi |
+| FR-18 | Nav bar me "YouTube" link hoga jo scroll karke YouTube section par le jayega |
+| FR-19 | YouTube section me ek **stats strip** hoga — Subscribers, Videos, Views, Niches (chaar primary metrics) |
+| FR-20 | Stats strip ke neeche ek secondary row hoga — Channels Managed, Videos Delivered, Growth stat |
+| FR-21 | YouTube section me **6 clickable tabs** honge, har ek service area represent karta hoga |
+| FR-22 | Tab click karne par active tab ka panel dikhega aur baaki panels hide honge |
+| FR-23 | Tabs keyboard se navigate ho sake (Left/Right arrow, Home/End) — sirf mouse na chahiye |
+| FR-24 | YouTube section me ek CTA button hoga jo visitor ko Contact section par le jayega |
+| FR-25 | YouTube stats dummy/sample data hongi, aur section me visibly **"Sample data"** label lagega (taaki koi na samjhe ki ye asli numbers hain) |
+| FR-26 | Header aur Footer ke social icons me YouTube icon add hoga |
 
 ## 1.6 Non-Functional Requirements (NFR) — "System kaisa hona chahiye"
 
